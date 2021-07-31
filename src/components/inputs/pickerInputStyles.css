@@ -1,0 +1,20 @@
+.pickerInputContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pickerSpan {
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    display: inline-block;
+    border: 2px solid white;
+    transition: border-width 0.1s linear;
+}
+
+.pickerSpan:focus { border-width: 3px; }
+
+.pickerInputs{
+    color:rgb(255, 255, 255);
+}
