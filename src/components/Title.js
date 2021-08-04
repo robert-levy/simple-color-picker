@@ -3,7 +3,7 @@ import './Title.scss'
 
 const Title = () => {
     return (
-        <span class="sticker">
+        <span className="sticker">
             <span>Color Picker</span>
         </span>
     )

@@ -1,17 +1,17 @@
 import colorMappings from './color-mappings.json'
 
 export const checkColorType = (color) => {
-    var colorFormatted = color.replace(/ /g, '').toLowerCase()
     const rgbRegex = /^rgb\((0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d),(0|255|25[0-4]|2[0-4]\d|1\d\d|0?\d?\d)\)$/
     const hslRegex = /^hsl\((0|360|35\d|3[0-4]\d|[12]\d\d|0?\d?\d),(0|100|\d{1,2})%,(0|100|\d{1,2})%\)$/
     const hexRegex = /^#?([a-f\d]{3}|[a-f\d]{6})$/
     const isNum = /^\d+$/
+    const lettersOnly = /^[a-z0-9_-]+$/
 
-    if (isNum.test(colorFormatted) == true) return "formatError"
-    if (colorFormatted.match(rgbRegex) !== null) return "rgb"
-    if (colorFormatted.match(hslRegex) !== null) return "hsl"
-    if (colorFormatted.match(hexRegex) !== null) return "hex"
-    if (Object.keys(colorMappings).includes(color)) return "name"
+    if (isNum.test(color)) return "formatError"
+    if (color.match(rgbRegex) !== null) return "rgb"
+    if (color.match(hslRegex) !== null) return "hsl"
+    if (color.match(hexRegex) !== null && color.startsWith('#')) return "hex"
+    if (Object.keys(colorMappings).includes(color) && color.match(lettersOnly)) return "name"
     return "formatError"
 }
 
@@ -45,38 +45,48 @@ export const rgbToHsl = (rgb) => {
         max = Math.max(r, g, b),
         delta = max - min,
         h, s, l;
-    if (max == min) {
+    if (max === min) {
         h = 0;
-    } else if (r == max) {
+    } else if (r === max) {
         h = (g - b) / delta;
-    } else if (g == max) {
+    } else if (g === max) {
         h = 2 + (b - r) / delta;
-    } else if (b == max) {
+    } else if (b === max) {
         h = 4 + (r - g) / delta;
     }
     h = Math.min(h * 60, 360);
     if (h < 0) h += 360;
     l = (min + max) / 2;
-    if (max == min) s = 0;
+    if (max === min) s = 0;
     else if (l <= 0.5) s = delta / (max + min);
     else s = delta / (2 - max - min);
-    return `hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`
+    return `hsl(${Math.round(h)},${Math.round(s * 100)}%,${Math.round(l * 100)}%)`
 
 }
 
 export const hexToRgb = (hex) => {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ?
-        `rgb(${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)})`
-        : null;
+    const array = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
+        , (m, r, g, b) => '#' + r + r + g + g + b + b)
+        .substring(1).match(/.{2}/g)
+        .map(x => parseInt(x, 16))
+    return `rgb(${array[0]},${array[1]},${array[2]})`
 }
 
 export const hexToHsl = (hex) => {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    var r, g, b
+    if (hex.length === 4) {
+        var result = [...hex]
+        r = "0x" + result[1] + result[1];
+        g = "0x" + result[2] + result[2];
+        b = "0x" + result[3] + result[3];
 
-    var r = parseInt(result[1], 16)
-    var g = parseInt(result[2], 16)
-    var b = parseInt(result[3], 16)
+    }
+    else if (hex.length === 7) {
+        result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+        r = parseInt(result[1], 16)
+        g = parseInt(result[2], 16)
+        b = parseInt(result[3], 16)
+    }
 
     r /= 255
     g /= 255
@@ -84,7 +94,7 @@ export const hexToHsl = (hex) => {
     var max = Math.max(r, g, b), min = Math.min(r, g, b)
     var h, s, l = (max + min) / 2
 
-    if (max == min) {
+    if (max === min) {
         h = s = 0; // achromatic
     } else {
         var d = max - min;
@@ -93,6 +103,7 @@ export const hexToHsl = (hex) => {
             case r: h = (g - b) / d + (g < b ? 6 : 0); break;
             case g: h = (b - r) / d + 2; break;
             case b: h = (r - g) / d + 4; break;
+            default: break;
         }
         h /= 6;
     }
@@ -103,7 +114,7 @@ export const hexToHsl = (hex) => {
     l = Math.round(l);
     h = Math.round(360 * h);
 
-    return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+    return `hsl(${h},${s}%,${l}%)`;
 }
 
 export function hslToHex(hsl) {

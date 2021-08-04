@@ -10,6 +10,7 @@ const ColorPicker = ({ background, setBackground }) => {
   const [colors, setColors] = React.useState({ name: '', hex: background, rgb: '', hsl: '' })
 
   const updateFieldValues = (color) => {
+    color = color.replace(/ /g, '').toLowerCase()
     const type = checkColorType(color)
     let hexValue, rgbValue, hslValue
     switch (type) {
