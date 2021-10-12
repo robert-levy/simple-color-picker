@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import './ColorPicker.css'
 import colorMappings from '../color-mappings.json'
 import { checkColorType, rgbToHex, rgbToHsl, hslToHex, hslToRgb, hexToRgb, hexToHsl } from '../utility-functions'
@@ -9,7 +9,7 @@ const ColorPicker = ({ background, setBackground }) => {
 
   const [colors, setColors] = React.useState({ name: '', hex: background, rgb: '', hsl: '' })
 
-  const updateFieldValues = (color) => {
+  const updateFieldValues = useCallback(color => {
     color = color.replace(/ /g, '').toLowerCase()
     const type = checkColorType(color)
     let hexValue, rgbValue, hslValue
@@ -64,19 +64,19 @@ const ColorPicker = ({ background, setBackground }) => {
         return
     }
     setBackground(color)
-  }
+  }, [setBackground])
 
   React.useEffect(() => {
     updateFieldValues(background)
-  }, []);
+  }, [background, updateFieldValues]);
 
   return (
     <div className="container">
-      <Input colors={colors} updateFieldValues={updateFieldValues} type="name"/>
-      <Input colors={colors} updateFieldValues={updateFieldValues} type="hex"/>
-      <Input colors={colors} updateFieldValues={updateFieldValues} type="rgb"/>
-      <Input colors={colors} updateFieldValues={updateFieldValues} type="hsl"/>
-      <PickerInput colors={colors} updateFieldValues={updateFieldValues}/>
+      <Input colors={colors} updateFieldValues={updateFieldValues} type="name" />
+      <Input colors={colors} updateFieldValues={updateFieldValues} type="hex" />
+      <Input colors={colors} updateFieldValues={updateFieldValues} type="rgb" />
+      <Input colors={colors} updateFieldValues={updateFieldValues} type="hsl" />
+      <PickerInput colors={colors} updateFieldValues={updateFieldValues} />
     </div>
   )
 }

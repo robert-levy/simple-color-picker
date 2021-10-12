@@ -1,5 +1,6 @@
 import React from 'react'
 import './inputStyles.css'
+import TextField from '@mui/material/TextField';
 
 const Input = ({ updateFieldValues, colors, type }) => {
 
@@ -15,10 +16,10 @@ const Input = ({ updateFieldValues, colors, type }) => {
 
     // update all field values
     const handleEnter = (event, color) => {
-        if(error) setError(false)
+        if (error) setError(false)
         if (event.key === 'Enter') {
             const checkError = updateFieldValues(color)
-            if(checkError){
+            if (checkError) {
                 setError(true)
             }
         }
@@ -28,20 +29,24 @@ const Input = ({ updateFieldValues, colors, type }) => {
     React.useEffect(() => {
         setColor(colors[type])
         setError(false)
-    }, [colors]);
+    }, [colors, type]);
 
     return (
         <div className="inputContainer">
-            <label htmlFor={type}>{type}</label>
-            <input
-                type="text"
+            <TextField
+                id="outlined-basic"
+                className={error ? "inputInvalid" : "input"}
+                label={type} 
+                variant="standard"
+                margin="normal"
                 value={color}
                 onKeyDown={(event) => handleEnter(event, color)}
                 onChange={handleChange}
                 autoComplete="nope"
-                className={error ? "inputInvalid": "input"}
-                id={type}
+                error={error}
+                spellCheck={false}
             />
+
         </div>
     )
 }

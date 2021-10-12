@@ -21,12 +21,6 @@ const PickerInput = ({ updateFieldValues, colors }) => {
 
     return (
         <div className="pickerInputContainer">
-            <label htmlFor="colorPicker">Color picker</label>
-            <span
-                className="pickerSpan"
-                style={{ backgroundColor: colors.hex }}
-                onClick={handleSpanClick}
-            />
             <input
                 type="color"
                 value={color}
@@ -34,6 +28,11 @@ const PickerInput = ({ updateFieldValues, colors }) => {
                 style={styles.input}
                 ref={inputRef}
                 id="colorPicker"
+            />
+            <span
+                className="pickerSpan"
+                style={{ backgroundColor: colors.hex }}
+                onClick={handleSpanClick}
             />
         </div>
     )
@@ -52,6 +51,5 @@ const styles = {
         display: 'inline-block',
         position: 'relative',
         right: 21,
-        // backgroundColor:'white'
     }
 }
